@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Turn.js 翻书效果</title>
+    <style type="text/css">
+      body {
+        margin: 0;
+        padding: 0;
+        background: #ccc;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+      #magazine {
+        width: 1000px;
+        height: 600px;
+      }
+      #magazine .page {
+        background-color: white;
+        background-size: cover;
+        background-position: center;
+      }
+      #magazine .hard {
+        background: #344860 !important;
+        color: white;
+        text-align: center;
+        font-weight: bold;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .page-content {
+        padding: 20px;
+        font-size: 18px;
+        color: #333;
+        text-align: justify;
+        line-height: 1.6;
+      }
+    </style>
+    <script src="./turn.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+  <body>
+    <div id="magazine">
+      <div class="hard">封面</div>
+      <div>
+        <div class="page-content">
+          <h2>第一页</h2>
+          <p>这是第一页的内容。你可以：</p>
+          <ul>
+            <li>点击页面右边缘翻到下一页</li>
+            <li>点击页面左边缘翻到上一页</li>
+            <li>用鼠标拖拽页面角落来翻页</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="page-content">
+          <h2>第二页</h2>
+          <p>这是第二页的内容。观察翻页时的动画效果：</p>
+          <ul>
+            <li>自然的页面弯曲</li>
+            <li>逼真的阴影效果</li>
+            <li>平滑的翻页动画</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="page-content">
+          <h2>第三页</h2>
+          <p>这是第三页的内容。turn.js提供了非常逼真的翻页效果：</p>
+          <ul>
+            <li>仿真的物理效果</li>
+            <li>响应式的交互</li>
+            <li>流畅的动画</li>
+          </ul>
+        </div>
+      </div>
+      <div class="hard">封底</div>
+    </div>
+
+    <script type="text/javascript">
+      document.addEventListener("DOMContentLoaded", function () {
+        $("#magazine").turn({
+          width: 1000,
+          height: 600,
+          autoCenter: true,
+          display: "double",
+          acceleration: true,
+          elevation: 50,
+          gradients: true,
+          when: {
+            turning: function (e, page, view) {
+              // 翻页时的回调
+            },
+            turned: function (e, page) {
+              // 翻页完成后的回调
+            },
+          },
+        });
+      });
+    </script>
+  </body>
+</html>

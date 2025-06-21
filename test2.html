@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Turn.js 镜像透视效果</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="./turn.min.js"></script>
+
+    <!-- 配置Tailwind自定义颜色和字体 -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#165DFF",
+              secondary: "#FF7D00",
+              neutral: "#F5F7FA",
+            },
+            fontFamily: {
+              inter: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+
+    <style type="text/tailwindcss">
+      @layer utilities {
+        .content-auto {
+          content-visibility: auto;
+        }
+        .page-shadow {
+          box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
+        .mirror-container {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+          overflow: hidden;
+          z-index: 100;
+        }
+        .mirror-page {
+          position: absolute;
+          transform-origin: left center;
+          opacity: 0;
+          transition: opacity 0.2s ease, transform 0.3s ease;
+          background-color: rgba(255, 255, 255, 0.7);
+          box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+      }
+    </style>
+  </head>
+  <body
+    class="bg-neutral font-inter min-h-screen flex flex-col items-center justify-center p-4"
+  >
+    <div class="max-w-4xl w-full mx-auto">
+      <h1
+        class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-primary mb-6 text-center"
+      >
+        Turn.js 镜像透视效果演示
+      </h1>
+
+      <div class="relative" id="book-container">
+        <!-- 镜像容器 -->
+        <div class="mirror-container" id="mirror-container"></div>
+
+        <!-- Turn.js书籍容器 -->
+        <div
+          id="flipbook"
+          class="w-full aspect-[4/3] bg-white rounded-lg overflow-hidden page-shadow"
+        >
+          <!-- 页面1 -->
+          <div
+            class="h-full w-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-8"
+          >
+            <div class="text-center">
+              <h2 class="text-2xl font-bold text-primary mb-4">第一页</h2>
+              <p class="text-gray-700">这是翻页书籍的第一页内容。</p>
+              <img
+                src="https://picsum.photos/seed/page1/400/200"
+                alt="示例图片"
+                class="mt-6 rounded-lg mx-auto"
+              />
+            </div>
+          </div>
+
+          <!-- 页面2 -->
+          <div
+            class="h-full w-full flex items-center justify-center bg-gradient-to-br from-green-50 to-teal-100 p-8"
+          >
+            <div class="text-center">
+              <h2 class="text-2xl font-bold text-green-600 mb-4">第二页</h2>
+              <p class="text-gray-700">这是翻页书籍的第二页内容。</p>
+              <img
+                src="https://picsum.photos/seed/page2/400/200"
+                alt="示例图片"
+                class="mt-6 rounded-lg mx-auto"
+              />
+            </div>
+          </div>
+
+          <!-- 页面3 -->
+          <div
+            class="h-full w-full flex items-center justify-center bg-gradient-to-br from-yellow-50 to-orange-100 p-8"
+          >
+            <div class="text-center">
+              <h2 class="text-2xl font-bold text-orange-600 mb-4">第三页</h2>
+              <p class="text-gray-700">这是翻页书籍的第三页内容。</p>
+              <img
+                src="https://picsum.photos/seed/page3/400/200"
+                alt="示例图片"
+                class="mt-6 rounded-lg mx-auto"
+              />
+            </div>
+          </div>
+
+          <!-- 页面4 -->
+          <div
+            class="h-full w-full flex items-center justify-center bg-gradient-to-br from-purple-50 to-pink-100 p-8"
+          >
+            <div class="text-center">
+              <h2 class="text-2xl font-bold text-purple-600 mb-4">第四页</h2>
+              <p class="text-gray-700">这是翻页书籍的第四页内容。</p>
+              <img
+                src="https://picsum.photos/seed/page4/400/200"
+                alt="示例图片"
+                class="mt-6 rounded-lg mx-auto"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-8 flex justify-center gap-4">
+        <button
+          id="prev-btn"
+          class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all duration-300 transform hover:scale-105 flex items-center"
+        >
+          <i class="fa fa-arrow-left mr-2"></i> 上一页
+        </button>
+        <button
+          id="next-btn"
+          class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all duration-300 transform hover:scale-105 flex items-center"
+        >
+          下一页 <i class="fa fa-arrow-right ml-2"></i>
+        </button>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // 初始化翻页书
+        const flipbook = $("#flipbook").turn({
+          gradients: true,
+          acceleration: true,
+          display: "single", // 设置为单页模式
+          elevation: 50,
+          autoCenter: true,
+        });
+
+        // 获取镜像容器
+        const mirrorContainer = document.getElementById("mirror-container");
+
+        // 上一页和下一页按钮
+        document.getElementById("prev-btn").addEventListener("click", () => {
+          if (flipbook.turn("page") > 1) {
+            flipbook.turn("previous");
+          }
+        });
+
+        document.getElementById("next-btn").addEventListener("click", () => {
+          if (flipbook.turn("page") < flipbook.turn("pages")) {
+            flipbook.turn("next");
+          }
+        });
+
+        // 翻页动画开始时创建镜像
+        flipbook.bind("start", function (e, pageObject, corner) {
+          // 清理之前的镜像
+          while (mirrorContainer.firstChild) {
+            mirrorContainer.removeChild(mirrorContainer.firstChild);
+          }
+
+          const page = pageObject.page;
+          const bookWidth = flipbook.width();
+          const bookHeight = flipbook.height();
+
+          // 获取当前页元素
+          const currentPage = flipbook.find('.page[data-page="' + page + '"]');
+          if (!currentPage.length) return;
+
+          // 创建镜像元素
+          const mirrorPage = document.createElement("div");
+          mirrorPage.className = "mirror-page";
+          mirrorPage.style.width = bookWidth / 2 + "px";
+          mirrorPage.style.height = bookHeight + "px";
+
+          // 克隆当前页内容
+          const pageContent = currentPage.cloneNode(true);
+          pageContent.style.width = "100%";
+          pageContent.style.height = "100%";
+          pageContent.style.pointerEvents = "none";
+
+          // 移除可能干扰镜像效果的样式
+          Array.from(pageContent.querySelectorAll("*")).forEach((el) => {
+            el.style.animation = "none";
+            el.style.transition = "none";
+          });
+
+          mirrorPage.appendChild(pageContent);
+          mirrorContainer.appendChild(mirrorPage);
+
+          // 存储镜像元素供后续使用
+          mirrorContainer.currentMirror = mirrorPage;
+
+          // 初始位置取决于翻页方向
+          if (corner === "br") {
+            // 向右翻页
+            mirrorPage.style.left = bookWidth / 2 + "px";
+          } else if (corner === "bl") {
+            // 向左翻页
+            mirrorPage.style.left = "0";
+            mirrorPage.style.transformOrigin = "right center";
+          }
+        });
+
+        // 翻页过程中更新镜像效果
+        flipbook.bind("turning", function (e, page, view) {
+          const mirrorPage = mirrorContainer.currentMirror;
+          if (!mirrorPage) return;
+
+          // 获取翻页进度 (0-1)
+          const progress = flipbook.turn("progress");
+
+          // 计算镜像的透明度和变形
+          let opacity = 0;
+          let scale = 1;
+
+          if (progress < 0.5) {
+            // 翻页初期，镜像逐渐显示
+            opacity = progress * 2 * 0.7; // 最大透明度为0.7
+            scale = 1 - progress * 2 * 0.1; // 轻微缩小
+          } else {
+            // 翻页后期，镜像逐渐消失
+            opacity = (1 - progress) * 2 * 0.7;
+            scale = 0.9 + (1 - progress) * 2 * 0.1; // 恢复大小
+          }
+
+          // 获取当前页信息
+          const currentPage = flipbook.turn("page");
+          const isRightToLeft = page < currentPage;
+
+          // 应用变换效果
+          if (isRightToLeft) {
+            // 向左翻页
+            mirrorPage.style.transform = `scaleX(${scale})`;
+            mirrorPage.style.opacity = opacity;
+          } else {
+            // 向右翻页
+            mirrorPage.style.transform = `scaleX(${scale})`;
+            mirrorPage.style.opacity = opacity;
+          }
+        });
+
+        // 翻页完成后清理镜像
+        flipbook.bind("turned", function () {
+          // 延迟清理以确保动画完成
+          setTimeout(() => {
+            while (mirrorContainer.firstChild) {
+              mirrorContainer.removeChild(mirrorContainer.firstChild);
+            }
+            mirrorContainer.currentMirror = null;
+          }, 300);
+        });
+      });
+    </script>
+  </body>
+</html>

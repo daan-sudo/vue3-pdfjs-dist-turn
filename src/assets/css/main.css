@@ -1,0 +1,94 @@
+@import "./base.css";
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body,
+input,
+dd,
+dl,
+h1,
+h2,
+h3,
+h4,
+p,
+ul,
+ol {
+  margin: 0;
+}
+button,
+input,
+option,
+textarea {
+  padding: 0;
+}
+ol,
+ul {
+  padding-left: 0;
+  list-style: none;
+}
+.flex {
+  display: flex;
+}
+.itemsCenter {
+  align-items: center;
+}
+.flexCenter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.flexBetwwen {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.flexHorizontalCenter {
+  display: flex;
+  align-items: center;
+}
+.hidden {
+  visibility: hidden;
+}
+.ant-modal div[aria-hidden="true"] {
+  display: none !important;
+}
+/* .ant-modal .ant-modal-content {
+  padding: 0;
+} */
+body,
+button {
+  /* font-size: 16px; */
+  /* line-height: 1.4; */
+  color: #4c4c4c;
+  font-family: PingFang SC Regular, PingFang SC, Helvetica Neue, Helvetica,
+    STHeiTi, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+/* 全局滚动条样式 */
+::-webkit-scrollbar {
+  width: 6px; /* 纵向滚动条的宽度 */
+  height: 6px; /* 横向滚动条的高度 */
+}
+
+/* 滚动条轨道 */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* 轨道颜色 */
+}
+
+/* 滚动条手柄 */
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1; /* 手柄颜色 */
+  border-radius: 3px; /* 手柄圆角 */
+}
+
+/* 滚动条手柄 hover 状态 */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; /* 手柄 hover 颜色 */
+}
+.ub-ellipsis {
+  overflow: hidden; /* 隐藏溢出的文本 */
+  text-overflow: ellipsis; /* 显示省略号 */
+  white-space: nowrap; /* 防止文本换行 */
+}
