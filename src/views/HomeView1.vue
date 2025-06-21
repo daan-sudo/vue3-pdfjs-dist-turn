@@ -16,6 +16,7 @@ import { ref, onMounted, onBeforeUnmount } from "vue";
 import "@/utils/turnjs4/lib/turn.js";
 import $ from "jquery";
 onMounted(() => {
+  console.log(111);
   $("#flipbook").turn({
     width: 600,
     height: 400,
